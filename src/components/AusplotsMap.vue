@@ -1,33 +1,32 @@
 <template>
-  <div style="height: 350px;">
-    <div class="info" style="height: 15%">
-      <span>Center: {{ center }}</span>
-      <span>Zoom: {{ zoom }}</span>
-      <span>Bounds: {{ bounds }}</span>
+  <div>
+    <div class="the-header">
+      <button @click="getSites">Refresh sites</button>
+      <h1>Ausplots sites</h1>
     </div>
-    <l-map
-      style="height: 80%; width: 100%"
-      :zoom="zoom"
-      :center="center"
-      @update:zoom="zoomUpdated"
-      @update:center="centerUpdated"
-      @update:bounds="boundsUpdated"
-    >
-      <l-tile-layer :url="url"></l-tile-layer>
-      <l-marker
-        :lat-lng="curr.latlng"
-        v-for="curr of sitesComputed"
-        :key="curr.id"
-      ></l-marker>
-    </l-map>
-    <button @click="getSites">Get sites</button>
+    <div class="the-map">
+      <l-map style="height: 100%; width: 100%" :zoom="zoom" :center="center">
+        <l-tile-layer :url="url"></l-tile-layer>
+        <l-marker
+          :lat-lng="curr.latlng"
+          v-for="curr of sitesComputed"
+          :key="curr.id"
+        >
+          <l-tooltip>
+            Site name: {{ curr.tooltip.siteName }}<br />
+            Visit start date: {{ curr.tooltip.visitStartDate }}
+          </l-tooltip>
+        </l-marker>
+      </l-map>
+    </div>
   </div>
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker, LTooltip } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { Icon } from 'leaflet'
+import { mapState } from 'vuex'
 
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
@@ -41,42 +40,54 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
+    LTooltip,
   },
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       zoom: 3,
       center: [-34.9826287, 138.5529928],
-      bounds: null,
-      sites: [],
     }
   },
   computed: {
+    ...mapState(['sites']),
     sitesComputed() {
       return this.sites.map(e => ({
         id: `${e.site_location_name}_${e.visit_start_date}`,
         latlng: [e.latitude, e.longitude],
+        tooltip: {
+          siteName: e.site_location_name,
+          visitStartDate: e.visit_start_date,
+        },
       }))
     },
   },
   methods: {
-    zoomUpdated(zoom) {
-      this.zoom = zoom
-    },
-    centerUpdated(center) {
-      this.center = center
-    },
-    boundsUpdated(bounds) {
-      this.bounds = bounds
-    },
-    async getSites() {
-      const resp = await fetch(
-        'http://swarmapi.ausplots.aekos.org.au/site?limit=50',
-      )
-      this.sites = await resp.json()
+    getSites() {
+      return this.$store.dispatch('refreshSites')
     },
   },
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.the-header {
+  height: 10vh;
+
+  h1 {
+    margin: 0;
+    margin-left: 0.5em;
+    padding-top: 0.25em;
+  }
+
+  button {
+    float: right;
+    margin-top: 1em;
+    margin-right: 1em;
+  }
+}
+
+.the-map {
+  height: 90vh;
+}
+</style>
