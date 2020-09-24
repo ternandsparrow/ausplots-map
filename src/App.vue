@@ -1,16 +1,19 @@
 <template>
   <div id="app">
+    <ausplots-stats />
     <ausplots-map />
   </div>
 </template>
 
 <script>
 import AusplotsMap from '@/components/AusplotsMap'
+import AusplotsStats from '@/components/AusplotsStats'
 
 export default {
   name: 'App',
   components: {
     'ausplots-map': AusplotsMap,
+    'ausplots-stats': AusplotsStats,
   },
 }
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="the-header">
-      <button @click="getSites">Refresh sites</button>
-      <h1>Ausplots sites</h1>
+      <button @click="refreshSites">Refresh sites</button>
+      <h1>Site map</h1>
     </div>
     <div class="the-map">
       <l-map style="height: 100%; width: 100%" :zoom="zoom" :center="center">
@@ -36,6 +36,7 @@ Icon.Default.mergeOptions({
 })
 
 export default {
+  name: 'AusplotsMap',
   components: {
     LMap,
     LTileLayer,
@@ -62,8 +63,11 @@ export default {
       }))
     },
   },
+  mounted() {
+    this.refreshSites()
+  },
   methods: {
-    getSites() {
+    refreshSites() {
       return this.$store.dispatch('refreshSites')
     },
   },
@@ -88,6 +92,6 @@ export default {
 }
 
 .the-map {
-  height: 90vh;
+  height: 50vh;
 }
 </style>
