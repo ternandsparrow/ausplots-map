@@ -22,10 +22,9 @@ export default new Vuex.Store({
       let offset = 0
       while (isMorePages) {
         const thisPage = await fetchForJson(
-          `${apiBaseUrl}/site` +
+          `${apiBaseUrl}/visit_summary` +
             `?limit=${pageSize}` +
-            `&offset=${offset}` +
-            `&select=site_location_name,visit_start_date,latitude,longitude`,
+            `&offset=${offset}`,
         )
         allSites = allSites.concat(thisPage)
         isMorePages = thisPage.length === pageSize
