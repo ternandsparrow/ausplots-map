@@ -8,16 +8,16 @@ const apiBaseUrl =
 
 export default new Vuex.Store({
   state: {
-    sites: [],
+    visits: [],
     stats: [],
   },
   mutations: {
-    setSites: (state, sites) => (state.sites = sites),
+    setVisits: (state, visits) => (state.visits = visits),
     setStats: (state, stats) => (state.stats = stats),
   },
   actions: {
-    async refreshSites({ commit }) {
-      let allSites = []
+    async refreshVisits({ commit }) {
+      let allResults = []
       let isMorePages = true
       let offset = 0
       while (isMorePages) {
@@ -26,11 +26,11 @@ export default new Vuex.Store({
             `?limit=${pageSize}` +
             `&offset=${offset}`,
         )
-        allSites = allSites.concat(thisPage)
+        allResults = allResults.concat(thisPage)
         isMorePages = thisPage.length === pageSize
         offset += pageSize
       }
-      commit('setSites', allSites)
+      commit('setVisits', allResults)
     },
     async refreshStats({ commit }) {
       const stats = await fetchForJson(`${apiBaseUrl}/ausplots_stats`)

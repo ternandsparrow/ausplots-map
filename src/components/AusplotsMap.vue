@@ -12,11 +12,7 @@
     <div class="the-map">
       <l-map style="height: 100%; width: 100%" :zoom="zoom" :center="center">
         <l-tile-layer :url="url"></l-tile-layer>
-        <l-marker
-          :lat-lng="curr.latlng"
-          v-for="curr of sitesComputed"
-          :key="curr.id"
-        >
+        <l-marker :lat-lng="curr.latlng" v-for="curr of sites" :key="curr.id">
           <l-tooltip>
             Site name: {{ curr.tooltip.siteName }}<br />
             Visits:
@@ -69,9 +65,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['sites']),
-    sitesComputed() {
-      const reduced = this.sites.reduce((accum, e) => {
+    ...mapState(['visits']),
+    sites() {
+      const reduced = this.visits.reduce((accum, e) => {
         const key = e.site_location_name
         const existing = accum[key] || {
           id: e.site_location_name,
@@ -97,11 +93,11 @@ export default {
     },
   },
   mounted() {
-    this.refreshSites()
+    this.refreshVisits()
   },
   methods: {
-    refreshSites() {
-      return this.$store.dispatch('refreshSites')
+    refreshVisits() {
+      return this.$store.dispatch('refreshVisits')
     },
   },
 }
