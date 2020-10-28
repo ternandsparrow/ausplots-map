@@ -7,6 +7,9 @@ executors:
   default-executor:
     docker:
       - image: circleci/node:10-browsers
+        auth:
+          username: $DOCKER_USERNAME
+          password: $DOCKER_PASSWORD
 
 jobs:
   install-dependencies:
